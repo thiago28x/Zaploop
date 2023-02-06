@@ -1,1 +1,0 @@
-let webhookReceiveMessage = 'meusite.com.br/api/recebe-msg'

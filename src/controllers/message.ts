@@ -38,12 +38,12 @@ export const send: RequestHandler = async (req, res) => {
     const session = getSession(req.params.sessionId)!;
 
     const exists = await jidExists(session, jid, type);
-    if (!exists) return res.status(400).json({ error: 'JID does not exists' });
+    if (!exists) return res.status(400).json({ error: 'This phone is not on WhatsApp 🏖' });
 
     const result = await session.sendMessage(jid, message, options);
     res.status(200).json(result);
   } catch (e) {
-    const message = 'An error occured during message send';
+    const message = 'An error occured during message send - Error 1';
     logger.error(e, message);
     res.status(500).json({ error: message });
   }
@@ -61,7 +61,7 @@ export const sendBulk: RequestHandler = async (req, res) => {
     try {
       const exists = await jidExists(session, jid, type);
       if (!exists) {
-        errors.push({ index, error: 'JID does not exists' });
+        errors.push({ index, error: 'This phone is not on WhatsApp 🏖' });
         continue;
       }
 
