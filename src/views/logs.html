@@ -1,0 +1,191 @@
+<html>
+  <head>
+
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+   
+
+    <style>
+
+        h1 {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        font-size: 40px;
+        text-align: center;
+        color: #5de2a8;}
+
+        body {
+        background-color: #272727;
+        min-height: 100vh;
+        height: 100%;
+        margin: 0;
+            }
+
+
+      .container {
+         border-radius: 10px;
+        max-width: 500px;
+        padding-top: 0px;
+        background-color: #333;
+        width: 100%;
+        height: 500px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        position: absolute;
+         top: 45%;
+         left: 50%;
+         transform: translate(-50%, -50%);
+      }
+
+
+
+
+
+      input[type="email"],
+input[type="text"] {
+  width: 250px;
+  height: 20px;
+  margin: 10px 0;
+  padding: 10px;
+  text-align: left;
+  border: none;
+  border-radius: 10px;
+  background-color: #ffffff;
+  font-size: 18px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  max-height: 30px;
+}
+
+
+button {
+  width: 270px;
+  height: 40px;
+  margin: 10px 0;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  background-color: #5de2a8;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+
+
+
+
+
+      img {
+        width: 250px;
+        height: 250px;
+        margin: 10px 0;
+      }
+
+      footer {
+        background-color: #0e3d91;
+        color: #fff;
+        width: 100%;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        bottom: 0;
+      }
+
+      a {
+        color: #fff;
+        text-decoration: none;
+        margin-right: 10px;}
+
+
+
+
+
+
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1> Zaploop V2 - Request log</h1>
+  
+      <table id="logs-table">
+        <tr>
+          <th>IP Address</th>
+          <th>Route</th> 
+        </tr>
+      </table>
+    </div>
+    
+  
+    <body>
+      <div class="container">
+        <h1> Zaploop V2 - Request log</h1>
+    
+        <table id="logs-table">
+          <tr>
+            <th>IP Address</th>
+            <th>Route</th> 
+          </tr>
+        </table>
+
+        <button id="parse-btn">Load file</button>
+
+      </div>
+      
+      <script src="https://cdn.jsdelivr.net/npm/papaparse@5.1.0/papaparse.min.js"></script>
+      
+
+      <script>
+        const parseBtn = document.getElementById('parse-btn');
+        const table = document.getElementById('logs-table');
+        
+        parseBtn.addEventListener('click', function() {
+          Papa.parse("./logs.csv", {
+            download: true,
+            header: true,
+            complete: function(results) {
+              console.log(results.data);
+              results.data.forEach(row => {
+                const tr = document.createElement('tr');
+                
+                const td1 = document.createElement('td');
+                td1.innerHTML = row.timestamp;
+                tr.appendChild(td1);
+                
+                const td2 = document.createElement('td');
+                td2.innerHTML = row.ip;
+                tr.appendChild(td2);
+                
+                const td3 = document.createElement('td');
+                td3.innerHTML = row.route;
+                tr.appendChild(td3);
+                
+                table.appendChild(tr);
+              });
+            }
+          });
+        });
+      </script>
+
+    </body>
+    
+
+
+
+
+
+
+
+
+
+  </body>
+  
+
+  
+</html>
