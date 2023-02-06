@@ -12,7 +12,7 @@
   "homepage": "https://github.com/ookamiiixd/baileys-api#readme",
   "license": "MIT",
   "scripts": {
-    "start": "node .",
+    "start": "node zaploop",
     "build": "tsc",
     "lint": "eslint .",
     "format": "prettier . --write"
