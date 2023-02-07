@@ -122,13 +122,22 @@ button {
     </div>
     
     <script type="text/javascript">
+
+      //pega a url do servidor
+        let url;
+        let host = '<%=host %>'
+        let host_ssl = '<%=host_ssl %>'
+        let port = '<%=port %>'
+        url = host != '' ? `${host}:${port}` : host_ssl
+
+
       const startQrCodeBtn = document.querySelector('#start-qr-code');
       const emailInput = document.querySelector('#email');
       const qrImage = document.querySelector('#qrcode');
       const dataDiv = document.querySelector('#data');
   
       startQrCodeBtn.addEventListener('click', () => {
-        const eventSource = new EventSource(`http://localhost:3000/sessions/${emailInput.value}/add-sse`);
+        const eventSource = new EventSource(`${url}/sessions/${emailInput.value}/add-sse`);
         eventSource.onerror = eventSource.close;
         eventSource.onmessage = (event) => {
           const data = JSON.parse(event.data);
