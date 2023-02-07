@@ -109,47 +109,42 @@ button {
 
     </style>
   </head>
-
-
   <body>
-    <div class="container">
-      <h1> Zaploop V2 🚀</h1>
-      <input type="email" id="email" placeholder="Registered Email">
-      <input type="text" placeholder="webhook endpoint URL">
-  
-      <img src="image.jpg"  id='qrcode' alt="qr-code" style="display: none;">
-      <button id="start-qr-code">Start QR Code</button>
-    </div>
-    
-    <script type="text/javascript">
-      const startQrCodeBtn = document.querySelector('#start-qr-code');
-      const emailInput = document.querySelector('#email');
-      const qrImage = document.querySelector('#qrcode');
-      const dataDiv = document.querySelector('#data');
-  
-      startQrCodeBtn.addEventListener('click', () => {
-        const eventSource = new EventSource(`http://localhost:3000/sessions/${emailInput.value}/add-sse`);
-        eventSource.onerror = eventSource.close;
-        eventSource.onmessage = (event) => {
-          const data = JSON.parse(event.data);
-          console.log(data);
-          qrImage.src = data.qr || '';
-          dataDiv.innerHTML = event.data;
-        };
-      });
-    </script>
-
-  
+ 
 
 
 
+    <head>
+
+        <script src="//cdn.dwolla.com/v2.1.9/dwolla-web.js"></script>
+        
+          <link rel="stylesheet" href="/styles/document-custom.css" />
+        
+          <script>
+            dwolla.configure({
+              environment: "sandbox",
+              styles: "/styles/document-custom.css",
+              success: (res) => Promise.resolve(),
+              error: (err) => Promise.resolve(),
+              token: "OOkQHSofKavP52uhV4cOFFwYaEexa3Rd6H7zAmDfCUn4aF7b8G"
+    });
 
 
 
-    <footer>
-        <a href="https://www.zaploop.xyz">www.zaploop.xyz</a>
-        <p>&copy; <script>document.write(new Date().getFullYear())</script> Contact +55 48 91854014</p>
-      </footer>
+  </script>
+</head>
+
+<body>
+  <div class="container">
+    <dwolla-document-upload customerId="078d096b-ab48-4a33-8726-374abda99062">
+    </dwolla-document-upload>
+  </div>
+</body>
+
+
+
+
+
 
 
 
