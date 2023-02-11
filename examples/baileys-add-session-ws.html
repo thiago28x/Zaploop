@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Zaploop v2</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, user-scalable=no" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet">
+</head>
+
+<style>
+
+    body {
+        background-color: rgb(61, 61, 61);
+        
+    }
+
+    .container {
+        padding: 50px;
+        margin: 50px;
+        background-color: rgb(61, 61, 61);
+    }
+
+    #image {
+        height: 300px;
+        width: 300px;
+        background-color: #fff;
+        padding: 30px;
+        margin: 30px;
+        border-radius: 20px;
+    }
+
+</style>
+
+<body>
+    <div class="container">
+        <h4>IN MAINTENANCE - EM MANUTENÇÃO ⛔</h4>
+        <div class="row" style="margin-top: 50px;">
+            <div class="col-sm-8">
+                <form class="form-horizontal">
+                    <input type="text" class="form-control" id="session-input" value='thiago2828' name="session"
+                    placeholder="Session name">
+                                    <button type="button" id="send-btn"
+                                        onclick="start()">
+                                        Enviar
+                                    </button>
+                                </div>
+                                <div class="col-sm-8">
+                                    <div id="data"></div>
+                                    <label for="">Status</label>
+                                    <span id="status"></span>
+                                </div>
+                   
+            </div>
+            <div class="col-sm-4">
+                <img id="image" src="/loading.gif" draggable="false" alt="qr-code">
+            </div>
+        </div>
+    </div>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/js/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.0/socket.io.min.js"></script>
+
+
+    <script>
+
+console.log('olá...');
+
+let url = 'http://66.94.98.174:3000/sessions/'
+
+
+
+        async function start() {
+        console.log('Iniciando...');
+
+ /* em outra vps
+        let host = '<%=host %>'
+        let host_ssl = '<%=host_ssl %>'
+        let port = '<%=port %>' 
+        url = host != '' ? `${host}:${port}` : host_ssl
+        pega url do servidor 
+        */
+        document.getElementById('image').style.visibility = "visible";  //"hidden"
+
+
+        let sessionName = document.getElementById("session-input").value
+
+
+        //let url = 'http://66.94.98.174:3000/sessions/john/add-sse';
+
+        console.log('Enviado para: \n\n' + url + sessionName);
+
+
+
+           //codigo addSSE
+        const eventSource = new EventSource(url+sessionName+'/add-sse');
+        eventSource.onerror = eventSource.close;
+        eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        console.log(data);
+        console.log('\n\n ' + event.message);
+        document.querySelector('#image').src = data.qr || '';
+        document.querySelector('#data').innerHTML = event.data;
+        setTimeout(welcome, 30407);
+      };
+        };
+
+       async function welcome() {
+        const data = {
+
+  jid: "554891854014@s.whatsapp.net",
+  type: "number",
+  message: {
+    text: "Hello! I just connected to Zaploop v2 🔋⚡"
+  }
+};
+
+fetch("http://66.94.98.174:3000/" + document.getElementById("session-input").value + "/messages/send", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(data)
+})
+  .then(response => {
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log(data);
+  })
+  .catch(error => {
+    console.error("There was a problem with the fetch operation:", error);
+  });
+        }
+
+
+
+
+
+
+       
+
+    </script>
+</body>
+
+</html>

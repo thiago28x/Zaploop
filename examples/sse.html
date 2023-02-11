@@ -11,7 +11,7 @@
     <div>Connection state:</div>
     <div id="data"></div>
     <script type="text/javascript">
-      const eventSource = new EventSource('http://localhost:3000/sessions/john/add-sse');
+      const eventSource = new EventSource('http://66.94.98.174:3000/sessions/john/add-sse');
       eventSource.onerror = eventSource.close;
       eventSource.onmessage = (event) => {
         const data = JSON.parse(event.data);
