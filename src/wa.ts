@@ -163,6 +163,7 @@ export async function createSession(options: createSessionOptions) {
 
   socket.ev.on('creds.update', saveCreds);
   socket.ev.on('connection.update', (update) => {
+    console.log('Received connection update event: \n', update);
     connectionState = update;
     const { connection } = update;
 
@@ -173,6 +174,13 @@ export async function createSession(options: createSessionOptions) {
     if (connection === 'close') handleConnectionClose();
     handleConnectionUpdate();
   });
+
+
+  socket.ev.on('messages.upsert', ({ messages }) => {
+    console.log('got messages', messages)
+})
+
+
 
   // Debug events
   // socket.ev.on('messaging-history.set', (data) => dump('messaging-history.set', data));
