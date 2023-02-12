@@ -27,6 +27,8 @@ const MAX_RECONNECT_RETRIES = Number(process.env.MAX_RECONNECT_RETRIES || 5);
 const SSE_MAX_QR_GENERATION = Number(process.env.SSE_MAX_QR_GENERATION || 5);
 const SESSION_CONFIG_ID = 'session-config';
 
+
+//     loading and initializing any existing sessions from the database and making them ready for use.
 export async function init() {
   initStore({ prisma, logger });
   const sessions = await prisma.session.findMany({
@@ -57,27 +59,51 @@ type createSessionOptions = {
   socketConfig?: SocketConfig;
 };
 
+// declare a function that returns a promise which creates a new session
 export async function createSession(options: createSessionOptions) {
+
+  // destructure the options object and assign default values
   const { sessionId, res, SSE = false, socketConfig } = options;
+
+  // create a string identifier for this session
   const configID = `${SESSION_CONFIG_ID}-${sessionId}`;
+
+  // initialize the connection state for this session as closed
   let connectionState: Partial<ConnectionState> = { connection: 'close' };
 
+  // define a destroy function that takes an optional logout parameter and returns a promise
   const destroy = async (logout = true) => {
+
+    // use try-catch to handle errors when deleting data from the database
     try {
       await Promise.all([
+        // use the socket object to log out if logout is truthy (i.e., not null, undefined, 0, false, or "")
         logout && socket.logout(),
+
+        // delete all chats for this session from the database
         prisma.chat.deleteMany({ where: { sessionId } }),
+
+        // delete all contacts for this session from the database
         prisma.contact.deleteMany({ where: { sessionId } }),
+
+        // delete all messages for this session from the database
         prisma.message.deleteMany({ where: { sessionId } }),
+
+        // delete all group metadata for this session from the database
         prisma.groupMetadata.deleteMany({ where: { sessionId } }),
+
+        // delete the session itself from the database
         prisma.session.deleteMany({ where: { sessionId } }),
       ]);
     } catch (e) {
+      // log any errors that occur during destruction
       logger.error(e, 'An error occured during session destroy');
     } finally {
+      // remove this session from the set of active sessions
       sessions.delete(sessionId);
     }
   };
+
 
   const handleConnectionClose = () => {
     const code = (connectionState.lastDisconnect?.error as Boom)?.output?.statusCode;
@@ -87,6 +113,8 @@ export async function createSession(options: createSessionOptions) {
     if (code === DisconnectReason.loggedOut || doNotReconnect) {
       if (res) {
         !SSE && !res.headersSent && res.status(500).json({ error: 'Unable to create session' });
+        console.log('Unable to create session');
+        console.trace();
         res.end();
       }
       destroy(doNotReconnect);
@@ -163,7 +191,7 @@ export async function createSession(options: createSessionOptions) {
 
   socket.ev.on('creds.update', saveCreds);
   socket.ev.on('connection.update', (update) => {
-    console.log('Received connection update event: \n', update);
+    console.log('Zaploop - connection update: \n', update);
     connectionState = update;
     const { connection } = update;
 
@@ -177,7 +205,7 @@ export async function createSession(options: createSessionOptions) {
 
 
   socket.ev.on('messages.upsert', ({ messages }) => {
-    console.log('got messages', messages)
+    console.log('Mensagem recebida: ', messages)
 })
 
 

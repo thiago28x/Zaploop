@@ -3,3 +3,4 @@ dist/
 debug/
 prisma/migrations/
 *.tgz
+.env

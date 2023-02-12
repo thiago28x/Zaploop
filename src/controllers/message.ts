@@ -42,9 +42,12 @@ export const send: RequestHandler = async (req, res) => {
 
     const result = await session.sendMessage(jid, message, options);
     res.status(200).json(result);
+    console.log('mensagem enviada: \n' + result);
+
   } catch (e) {
     const message = 'An error occured during message send - Error 1';
     logger.error(e, message);
+    console.log(e, message);
     res.status(500).json({ error: message });
   }
 };

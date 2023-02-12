@@ -12,15 +12,15 @@ export const status: RequestHandler = (req, res) => {
   let status = state[(session.ws as WebSocket).readyState];
   status = session.user ? 'AUTHENTICATED' : status;
   
-  console.trace(`Session ID: ${req.params.sessionId}, WebSocket state: ${(session.ws as WebSocket).readyState}`);
-  console.log(`User: ${session.user}, Status: ${status}`);
+  console.trace(`Session ID: ${req.params.sessionId} \n, WebSocket state: \n ${(session.ws as WebSocket).readyState}`);
+  console.log(`User: ${session.user}, \nStatus: ${status}`);
   res.status(200).json({ status });
 };
 
 export const add: RequestHandler = async (req, res) => {
   const { sessionId, ...options } = req.body;
 
-  if (sessionExists(sessionId)) return res.status(400).json({ error: `Session already exists, User: ${sessionId}` });
+  if (sessionExists(sessionId)) return res.status(400).json({ error: `Session already exists, \n User: ${sessionId}` });
   createSession({ sessionId, res, socketConfig: options });
 };
 
