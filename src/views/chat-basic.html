@@ -1,0 +1,65 @@
+<button id="chat">Show chat data</button>
+
+
+
+
+<script>
+
+
+
+
+
+
+
+//   http://38.105.209.221:3000/pages/start
+
+  // fetch('http://localhost:3000/:sessionId/chats')
+
+
+
+// Function to fetch data and create table
+function displayChatData() {
+  fetch('http://38.105.209.221:3000/ana2/chats')
+    .then(response => response.json())
+    .then(data => {
+      // Get the data array from the response
+      const dataArray = data.data;
+
+      // Create a table element and table headers
+      const table = document.createElement('table');
+      const tableHeader = table.createTHead();
+      const headerRow = tableHeader.insertRow(0);
+      const remoteJidHeader = headerRow.insertCell(0);
+      remoteJidHeader.innerHTML = 'Remote Jid';
+      const messageTimestampHeader = headerRow.insertCell(1);
+      messageTimestampHeader.innerHTML = 'Message Timestamp';
+
+      // Create a table body and populate it with data
+      const tableBody = table.createTBody();
+      dataArray.forEach(item => {
+        if (item.messages) {
+          item.messages.forEach(message => {
+            const newRow = tableBody.insertRow();
+            const remoteJidCell = newRow.insertCell(0);
+            remoteJidCell.innerHTML = message.message.key.remoteJid;
+            const messageTimestampCell = newRow.insertCell(1);
+            messageTimestampCell.innerHTML = message.message.messageTimestamp;
+          });
+        }
+      });
+
+      // Add the table to the DOM
+      document.body.appendChild(table);
+    })
+    .catch(error => console.error(error));
+}
+
+// Add event listener to the button
+const button = document.getElementById('chat');
+button.addEventListener('click', displayChatData);
+
+
+
+
+
+</script>

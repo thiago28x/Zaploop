@@ -1,93 +1,280 @@
+<!DOCTYPE html>
 <html>
-  <head>
+
+<head>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
 
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Zaploop v2</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, user-scalable=no" />
+    <link rel="icon" type="image/png" href="https://d1muf25xaso8hp.cloudfront.net/https%3A%2F%2Fs3.amazonaws.com%2Fappforest_uf%2Ff1665248210953x914159784268078200%2Fzaploop-transparente.png?w=48&h=48&auto=compress&dpr=1.25&fit=max">
 
-
-    <!--Start of Tawk.to Script-->
-<script type="text/javascript">
-  var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-  (function(){
-  var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-  s1.async=true;
-  s1.src='https://embed.tawk.to/63e396ad4742512879122d31/1goog962r';
-  s1.charset='UTF-8';
-  s1.setAttribute('crossorigin','*');
-  s0.parentNode.insertBefore(s1,s0);
-  })();
-  </script>
-  <!--End of Tawk.to Script-->
+   
+  
 </head>
 
 
-    <style>
-
-        h1 {
-        font-family: 'Montserrat', sans-serif;
-        font-weight: 700;
-        font-size: 40px;
-        text-align: center;
-        color: #5de2a8;}
-
-        body {
-        background-color: #272727;
-        min-height: 100vh;
-        height: 100%;
-  margin: 0;
-    }
 
 
-      .container {
-         border-radius: 10px;
-        max-width: 500px;
-        padding-top: 0px;
-        background-color: #333;
-        width: 100%;
-        height: 500px;
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+
+header {
         display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        position: absolute;
-         top: 45%;
-         left: 50%;
-         transform: translate(-50%, -50%);
+        flex-direction: row;
+        background-color: #2a2a2a;
+        color: #fff;
+        padding: 1rem;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 70px;
       }
 
+  h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 40px;
+  text-align: center;
+  color: #5de2a8;}
+
+  body {
+    font-family: Montserrat, sans-serif;
+  background-color: #272727;
+  min-height: 100vh;
+  height: 100%;
+  margin: 0;
+  height: 900px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 50px;
+}
+
+
+.container {
+   border-radius: 10px;
+  max-width: 500px;
+  padding-top: 0px;
+  background-color: #333;
+  width: 100%;
+  height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+   border: 3px solid #5de2a8;
+   margin: 10px;
+}
+
+.contact-card {
+   border-radius: 10px;
+  padding: 8px;
+  background-color: #333;
+  width: 150px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+   border: 1px solid #5de2a81e;
+   margin: 8px;
+}
 
 
 
 
-      input[type="email"],
+#contact-list {
+   border-radius: 10px;
+  padding-top: 0px;
+  background-color: #3b3b3b;
+  width: 20%;
+  height: 95%;
+  display: flex;
+  align-items: left;
+  justify-content: center;
+  flex-direction: column;
+   border: 0px solid #5de2a8;
+   margin: 10px;
+   overflow: hidden;
+   transition: height 0.2s ease-out;
+   height: auto;
+  overflow-y: scroll;
+  min-width: 230px;
+}
+
+
+#message-list-list {
+   border-radius: 10px;
+  padding-top: 0px;
+  background-color: #3b3b3b;
+  width: 80%;
+  height: 95%;
+  display: flex;
+  align-items: right;
+  justify-content: center;
+  flex-direction: column;
+   border: 0px solid #5de2a8;
+   margin: 10px;
+   overflow: hidden;
+   transition: height 0.2s ease-out;
+   height: auto;
+  overflow-y: scroll;
+}
+
+
+#chat-container {
+   border-radius: 10px;
+  background-color: #212121;
+  width: 80%;
+  height: 80%;
+  display: flex;
+  align-items: left;
+  justify-content: space-between;
+  flex-direction: row;
+   border: 0px solid #5de2a8;
+   margin: 10px;
+   overflow: hidden;
+   transition: height 0.2s ease-out;
+}
+
+
+
+
+input[type="email"],
 input[type="text"] {
-  width: 250px;
-  height: 20px;
-  margin: 10px 0;
-  padding: 10px;
-  text-align: left;
-  border: none;
-  border-radius: 10px;
-  background-color: #ffffff;
-  font-size: 18px;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-  max-height: 30px;
+width: 250px;
+height: 20px;
+margin: 5px ;
+padding: 10px;
+text-align: left;
+border: none;
+border-radius: 5px;
+background-color: #ffffff;
+font-size: 18px;
+box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
 }
 
 
 button {
-  width: 270px;
-  height: 40px;
-  margin: 10px 0;
-  padding: 10px;
-  border: none;
-  border-radius: 10px;
-  background-color: #5de2a8;
+width: 270px;
+height: 50px;
+margin: 10px;
+padding: 10px;
+border: none;
+border-radius: 10px;
+background-color: #5de2a8;
+color: #fff;
+font-size: 18px;
+font-weight: 700;
+box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+cursor: pointer;
+}
+
+
+#test-btn {
+background-color: #336ed4;
+}
+
+
+img { width: 250px; height: 250px; margin: 10px 0; background-color: #fff; border-radius: 5px; padding: 5px; }
+
+footer {
+background-color: #0e3d91;
+color: #fff;
+width: 100%;
+height: 70px;
+display: flex;
+align-items: left;
+flex-direction: column;
+justify-content: left;
+position: fixed;
+bottom: 0;
+padding: 20px;
+}
+
+a {
   color: #fff;
-  font-size: 18px;
-  font-weight: 700;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
+  text-decoration: none;
+  margin-right: 10px;}
+
+
+#image-qr-code {
+
+height: 200px !important;
+width: 200px !important;
+
+}
+
+table {
+  color: white;
+  min-height: 200px !important;
+min-width: 200px;
+}
+
+
+ 
+
+
+
+
+
+footer a, footer p {
+    font-family: Montserrat;
+  }
+
+  #footer-div {
+    margin: 20px;
+  }
+
+  .collapsed {
+  height: 0 !important;
+  overflow: hidden;
+  transition: height 0.2s ease-out;
+}
+
+
+#conversation tr {
+  display: flex;
+  flex-direction: column;
+}
+
+
+
+
+#conversation {
+  color: white;
+  min-height: 200px !important;
+min-width: 200px;
+display: flex;
+  flex-direction: column;
+ width: 100%;
+
+}
+
+
+#message-list {
+ width: 100%;
+}
+
+#conversation td {
+  background-color: #2d2d2d;
+  border-radius: 10px;
+  box-shadow: 0 3px 6px rgba(102, 66, 188, 0.16);
+  color: #fff;
+  padding: 10px;
+  margin-bottom: 10px;
+  display: table-cell !important;
+  width: auto !important;
+  min-width: 20px !important;
 }
 
 
@@ -95,88 +282,337 @@ button {
 
 
 
-      img {
-        width: 250px;
-        height: 250px;
-        margin: 10px 0;
-      }
-
-      footer {
-        background-color: #0e3d91;
-        color: #fff;
-        width: 100%;
-        height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: fixed;
-        bottom: 0;
-      }
-
-      a {
-        color: #fff;
-        text-decoration: none;
-        margin-right: 10px;}
+</style>
 
 
+<body>
 
+  <header>
+    <p>Header</p>
+    <button id="chat">Chat</button>
+    <button id="nav-connect" onclick="navToConnectWindow()">Connect</button>
 
+  </header>
 
-
-    </style>
-  
-
-
-  <body>
-    <div class="container">
-      <h1> Zaploop V2 🚀</h1>
-      <input type="email" id="email" placeholder="Registered Email">
-      <input type="text" placeholder="webhook endpoint URL">
-  
-      <img src="image.jpg"  id='qrcode' alt="qr-code" style="display: none;">
-      <button id="start-qr-code">Start QR Code</button>
+    <div class="container" id="gp-inputs">
+      <h1 style="margin-top: 0px;"> Zaploop V2 🚀</h1>
+      <input type="text" id="session-input" name="session" placeholder="Email">
+      <input type="text" placeholder="Webhook URL (optional)">
+      <button type="button" id="send-btn" onclick="start()"> Start</button>   
+      <button type="button" style="visibility: hidden;" id="test-btn" onclick="welcome()"> Test send message</button> 
+    <img class="qr" id="image-qr-code" src="https://i.pinimg.com/originals/e4/af/9f/e4af9f0025a8ce68bee2cf5a1360a501.gif" draggable="false" alt="qr-code">
     </div>
-    
-    <script type="text/javascript">
-
-      //pega a url do servidor
-        let url;
-        let host = '<%=host %>'
-        let host_ssl = '<%=host_ssl %>'
-        let port = '<%=port %>'
-        url = host != '' ? `${host}:${port}` : host_ssl
-
-
-      const startQrCodeBtn = document.querySelector('#start-qr-code');
-      const emailInput = document.querySelector('#email');
-      const qrImage = document.querySelector('#qrcode');
-      const dataDiv = document.querySelector('#data');
-  
-      startQrCodeBtn.addEventListener('click', () => {
-        const eventSource = new EventSource(`${url}/sessions/${emailInput.value}/add-sse`);
-        eventSource.onerror = eventSource.close;
-        eventSource.onmessage = (event) => {
-          const data = JSON.parse(event.data);
-          console.log(data);
-          qrImage.src = data.qr || '';
-          dataDiv.innerHTML = event.data;
-        };
-      });
-    </script>
 
   
+    <div id="chat-container" class="collapsed">
+    <div id="contact-list" ></div>
+    <div id="message-list" >
+      <table id="conversation">
+        <tr>
+          <td>Loading...</td>
+          <td>Carregando mensagens...</td>
+          <td>1...</td>
+          <td>2...</td>
+          <td>3...</td>
 
-
-
-
-
-
-    <footer>
-        <a href="https://www.zaploop.xyz">www.zaploop.xyz</a>
-        <p>&copy; <script>document.write(new Date().getFullYear())</script> Contact +55 48 91854014</p>
-      </footer>
-
-
+        </tr>
+      </table>
+    </div>
+    </div>
 
   </body>
+
+<!--   
+  <footer>
+    <div id="footer-div">
+    <a href="https://www.zaploop.xyz">www.zaploop.xyz</a>
+    <p>&copy; <script>document.write(new Date().getFullYear())</script> Contact +55 48 91854014</p>
+  </div>
+  </footer> -->
+
+
+
+
+    <script>
+
+        
+
+        //esconde ou mostrar botao de teste de envio
+        const sessionInput = document.getElementById("session-input");
+        const testBtn = document.getElementById("test-btn");
+
+        sessionInput.addEventListener("input", () => {
+        if (sessionInput.value.trim() !== "") {
+            testBtn.style.visibility = "visible";
+        } else {
+            testBtn.style.visibility = "hidden";
+        }
+        });
+
+    //table to view the connection status updates
+    const eventTable = document.querySelector('#event-table tbody');
+
+    console.log('Script carregado ☑');
+        /* em outra vps 
+        let host = '<%=host %>'
+        let host_ssl = '<%=host_ssl %>'
+        let port = '<%=port %>' 
+        url = host != '' ? `${host}:${port}` : host_ssl
+        pega url do servidor  */
+        let vpsIP = "38.105.209.221"
+
+        let url = 'http://' + vpsIP + ':3000/sessions/'
+
+
+
+        async function start() {
+    console.log('Iniciando...');
+    document.getElementById('image-qr-code').style.visibility = "visible";  //"hidden"
+
+    let sessionName = document.getElementById("session-input").value
+
+    console.log('Enviado para: \n\n' + url + sessionName);
+
+    //codigo addSSE
+    const eventSource = new EventSource(url+sessionName+'/add-sse');
+    eventSource.onerror = eventSource.close;
+    eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        console.log(data);
+        console.log('Connection: ' + '\n ' + event.connection);
+        document.querySelector('#image-qr-code').src = data.qr || '';
+       // document.querySelector('#data').innerHTML = event.data;
+
+        	// Create a new row with the message data
+			const newRow = document.createElement('tr');
+			const timeCell = document.createElement('td');
+			const messageCell = document.createElement('td');
+			timeCell.textContent = new Date().toLocaleTimeString();
+			messageCell.textContent = data.connection;
+			newRow.appendChild(timeCell);
+			newRow.appendChild(messageCell);
+			eventTable.appendChild(newRow);
+        //finished table related things
+
+        //schedule welcome message
+        if (data.connection === "open") {
+            setTimeout(welcome, 9407);
+        }
+    };
+};
+
+      //notifies the user the connection is working
+       async function welcome() {
+
+        const now = new Date();
+  const timeString = now.toLocaleTimeString();
+  
+        const data = {
+            jid: "554891854014@s.whatsapp.net",
+            type: "number",
+            message: {
+                text: `Hello! I just connected to Zaploop v2 🔋⚡ ${timeString}`
+            }
+            };
+
+            fetch("http://" + vpsIP + ":3000/" + document.getElementById("session-input").value + "/messages/send", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+                alert(`Message sent \n ID ${data.key.id} \n \n Check your phone 📱`)
+            })
+            .catch(error => { console.error("There was a problem with the fetch operation:", error);});}
+
+    
+
+          //mostrar WindowConnectInputs
+          function navToConnectWindow() {
+            const WindowChat = document.getElementById('chat-container');
+            WindowChat.classList.add("collapsed");
+
+            const WindowConnectInputs = document.getElementById('gp-inputs');
+            WindowConnectInputs.classList.remove("collapsed");}
+          
+
+
+
+              //CODE TO SHOW  CHAT DATA - FETCH REQUEST TO CHATS ETC
+function displayChatData() {
+
+    //navigation
+  const WindowChat = document.getElementById('chat-container');
+  WindowChat.classList.remove("collapsed");
+
+  const WindowConnectInputs = document.getElementById('gp-inputs');
+  WindowConnectInputs.classList.add("collapsed");
+
+
+
+  //do api call to server and create table
+
+  fetch('http://38.105.209.221:3000/ana/chats?limit=5')
+  .then(response => response.json())
+  .then(data => {
+    // Get the data array from the response
+    const dataArray = data.data;
+
+    // Get the contact-list div
+    const contactListDiv = document.querySelector('#contact-list');
+
+    // Remove all existing elements from the div
+    while (contactListDiv.firstChild) {
+      contactListDiv.removeChild(contactListDiv.firstChild);
+    }
+
+    // Create a table element and table headers
+    const table = document.createElement('table');
+    const tableBody = table.createTBody();
+
+    // Populate the table with data
+    dataArray.forEach(item => {
+      if (item.messages) {
+        item.messages.forEach(message => {
+          const newRow = tableBody.insertRow();
+          const contactCard = document.createElement('div');
+          contactCard.classList.add('contact-card');
+
+          contactCard.addEventListener('click', () => {
+            loadChat(contactCard.innerHTML);
+      
+      });
+          
+          // Remove '@s.whatsapp.net' from remoteJid
+          const remoteJid = message.message.key.remoteJid.replace('@s.whatsapp.net', '');
+          
+          contactCard.innerHTML = remoteJid;
+          
+          /* const messageTimestamp = document.createElement('div');
+          
+          // Convert the timestamp to a local time string in the format HH:MM
+          const timestamp = new Date(message.message.messageTimestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          
+          messageTimestamp.innerHTML = timestamp;
+          contactCard.appendChild(messageTimestamp); */
+          newRow.appendChild(contactCard);
+        });
+      }
+    });
+
+    // Add the table to the contact-list div
+    contactListDiv.appendChild(table);
+
+  console.log(dataArray.length);
+
+ 
+  })
+  .catch(error => console.error(error));
+}
+
+
+
+  function loadChat(contact) {
+    console.log(`Loading chat for ${contact} ... ⏳`)
+
+    let sessionId = "ana"; // replace with actual sessionId value
+
+    fetch(`http://38.105.209.221:3000/${sessionId}/chats/${Number(contact)}@s.whatsapp.net`)
+
+                                    .then(response => response.json())
+                                    
+                                    .then(data => {
+                                        console.log('Mensagens: ' + data);
+                                        console.log(data);
+                                        console.log(data.data.sessionId);
+
+
+
+
+
+
+                                      let conversationTable = document.querySelector("#conversation");
+                                              data.data.forEach(msg => {
+                                                let remoteJid = msg.remoteJid;
+                                                let conversation = msg.message.conversation;
+                                                let msgCard = document.createElement("div");
+                                                msgCard.classList.add("msgCard");
+                                                let remoteJidNode = document.createTextNode(remoteJid);
+                                                let conversationNode = document.createTextNode(conversation);
+                                                msgCard.appendChild(remoteJidNode);
+                                                msgCard.appendChild(document.createElement("br"));
+                                                msgCard.appendChild(conversationNode);
+                                                conversationTable.appendChild(msgCard);
+                                              });});}
+
+
+// Add event listener to the button
+const button = document.getElementById('chat');
+button.addEventListener('click', displayChatData);
+
+
+
+
+
+
+
+
+
+
+
+
+    //LOAD CONVERSATION FROM CONTACT TO CHAT 333 😻
+
+
+    const tableRows = document.querySelectorAll("#contact-list tr");
+      tableRows.forEach(row => {
+      row.addEventListener("click", function() {
+                                  let currentContact = this.querySelector(".contact-card").innerHTML;
+
+                                  console.log('contato: ' + currentContact)
+
+                                
+  });
+});
+
+let trElements = document.querySelectorAll("#contact-list tr");
+trElements.forEach(tr => {
+  tr.addEventListener("click", function() {
+    let contactCard = this.querySelector(".contact-card");
+    let contactNumber = contactCard.textContent.split("\n")[0];
+    alert(contactNumber);
+  });
+});
+
+
+
+
+
+
+    </script>
+
+
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
