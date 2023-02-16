@@ -12,6 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="viewport" content="width=device-width, user-scalable=no" />
     <link rel="icon" type="image/png" href="https://d1muf25xaso8hp.cloudfront.net/https%3A%2F%2Fs3.amazonaws.com%2Fappforest_uf%2Ff1665248210953x914159784268078200%2Fzaploop-transparente.png?w=48&h=48&auto=compress&dpr=1.25&fit=max">
+    <script src="/socket.io/socket.io.js"></script>
 
    
   
@@ -45,6 +46,24 @@ header {
   text-align: center;
   color: #5de2a8;}
 
+
+  .msgCard {
+   border-radius: 10px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  text-align: left;
+  color: #5de2a8;
+  padding: 10px;
+  margin: 5px;
+  background-color: #2D2D2D;
+  display: flex;
+  align-items: left;
+  justify-content: left;
+  flex-direction: column;
+  width: fit-content;
+}
+
   body {
     font-family: Montserrat, sans-serif;
   background-color: #272727;
@@ -77,19 +96,22 @@ header {
 
 .contact-card {
    border-radius: 10px;
-  padding: 8px;
+  padding: 5px;
   background-color: #333;
-  width: 150px;
   height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
    border: 1px solid #5de2a81e;
-   margin: 8px;
+   margin: 3px;
+  width: fit-content;
+
 }
 
-
+.contact-number {
+  color: #fff;
+}
 
 
 #contact-list {
@@ -261,10 +283,6 @@ display: flex;
 }
 
 
-#message-list {
- width: 100%;
-}
-
 #conversation td {
   background-color: #2d2d2d;
   border-radius: 10px;
@@ -275,6 +293,19 @@ display: flex;
   display: table-cell !important;
   width: auto !important;
   min-width: 20px !important;
+}
+
+
+#conversation tr td {
+  width: fit-content !important;
+  min-width: 20px !important;
+}
+
+#message-list {
+  height: 100%; /* set the height of the message list */
+  overflow-y: scroll; /* make the message list vertically scrollable */
+ width: 95%;
+
 }
 
 
@@ -291,6 +322,8 @@ display: flex;
     <p>Header</p>
     <button id="chat">Chat</button>
     <button id="nav-connect" onclick="navToConnectWindow()">Connect</button>
+    <button id="test" onclick="sortChatMessages()">reverse</button>
+
 
   </header>
 
@@ -305,17 +338,11 @@ display: flex;
 
   
     <div id="chat-container" class="collapsed">
-    <div id="contact-list" ></div>
+    <div id="contact-list" >
+      <tbody></tbody>
+    </div>
     <div id="message-list" >
       <table id="conversation">
-        <tr>
-          <td>Loading...</td>
-          <td>Carregando mensagens...</td>
-          <td>1...</td>
-          <td>2...</td>
-          <td>3...</td>
-
-        </tr>
       </table>
     </div>
     </div>
@@ -447,6 +474,7 @@ display: flex;
 
 
 
+
               //CODE TO SHOW  CHAT DATA - FETCH REQUEST TO CHATS ETC
 function displayChatData() {
 
@@ -459,64 +487,81 @@ function displayChatData() {
 
 
 
-  //do api call to server and create table
+  //do api call to server and create table for CONTACT LIST
 
-  fetch('http://38.105.209.221:3000/ana/chats?limit=5')
+  fetch('http://38.105.209.221:3000/ana/chats?limit=200')
   .then(response => response.json())
   .then(data => {
-    // Get the data array from the response
-    const dataArray = data.data;
 
-    // Get the contact-list div
+    // Get the data array from the response and sort by timestamp in descending order
+    const dataArray = data.data
+    // Get the contact-list DIV
     const contactListDiv = document.querySelector('#contact-list');
 
-    // Remove all existing elements from the div
+    // Remove all existing elements from the div /limpa a table de contatos
     while (contactListDiv.firstChild) {
       contactListDiv.removeChild(contactListDiv.firstChild);
     }
 
     // Create a table element and table headers
-    const table = document.createElement('table');
-    const tableBody = table.createTBody();
+const tableContacts = document.createElement('table');
+const tableBodyContacts = tableContacts.createTBody();
 
-    // Populate the table with data
-    dataArray.forEach(item => {
-      if (item.messages) {
-        item.messages.forEach(message => {
-          const newRow = tableBody.insertRow();
-          const contactCard = document.createElement('div');
-          contactCard.classList.add('contact-card');
+// POPULAR LISTA DE CONTATOS ⭐
+dataArray.forEach(item => {
+  //console.log("Celular    " + item.id );
+  const newRow = tableBodyContacts.insertRow(0); // insert at the beginning of the table body
+  const newCell = newRow.insertCell(0); // insert a new cell in the new row
+  const contactCard = document.createElement('div');
+  contactCard.classList.add('contact-card');
 
-          contactCard.addEventListener('click', () => {
-            loadChat(contactCard.innerHTML);
-      
-      });
-          
-          // Remove '@s.whatsapp.net' from remoteJid
-          const remoteJid = message.message.key.remoteJid.replace('@s.whatsapp.net', '');
-          
-          contactCard.innerHTML = remoteJid;
-          
-          /* const messageTimestamp = document.createElement('div');
-          
-          // Convert the timestamp to a local time string in the format HH:MM
-          const timestamp = new Date(message.message.messageTimestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-          
-          messageTimestamp.innerHTML = timestamp;
-          contactCard.appendChild(messageTimestamp); */
-          newRow.appendChild(contactCard);
-        });
-      }
-    });
+  //melhoria: modificar esta func caso o numero não comece com +55, e pensar para grupos também 
+  //ou talvez criar mais um data-id mantendo o numero real (escondido) e o formatado
+  contactCard.addEventListener('click', () => { loadChat('55'+contactCard.innerHTML); }); // ao clicar o contato -> chame esta func
 
-    // Add the table to the contact-list div
-    contactListDiv.appendChild(table);
+  // Remove '@s.whatsapp.net' from remoteJid
+   const remoteJid = item.id.replace('@s.whatsapp.net', '');
+  const regex = /^55/;
+  const newRemoteJid = remoteJid.replace(regex, '');
+  contactCard.innerHTML = newRemoteJid;
+  newCell.appendChild(contactCard); // add the contact card div to the new cell in the new row);
 
-  console.log(dataArray.length);
 
- 
+
+   /* const messageTimestamp = document.createElement('div');
+
+  // Convert the timestamp to a local time string in the format HH:MM
+  const timestamp = new Date(message.message.messageTimestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+  messageTimestamp.innerHTML = timestamp;
+  contactCard.appendChild(messageTimestamp); */
+});
+
+// Add the table to the contact-list div
+contactListDiv.appendChild(tableContacts);
+
+  const rows = Array.from(tableContacts.querySelectorAll('tr'));
+  rows.reverse();
+  tableBody.innerHTML = '';
+  rows.forEach(row => {
+    tableBody.appendChild(row);
+  });
+
+
+
+console.log(dataArray.length);
+
+
+
+
+
+
   })
   .catch(error => console.error(error));
+  //terminou a api call
+
+  
+
 }
 
 
@@ -526,92 +571,83 @@ function displayChatData() {
 
     let sessionId = "ana"; // replace with actual sessionId value
 
-    fetch(`http://38.105.209.221:3000/${sessionId}/chats/${Number(contact)}@s.whatsapp.net`)
+    fetch(`http://38.105.209.221:3000/${sessionId}/chats/${Number(contact)}@s.whatsapp.net?limit=200`)
 
-                                    .then(response => response.json())
+     .then(response => response.json())
                                     
-                                    .then(data => {
-                                        console.log('Mensagens: ' + data);
-                                        console.log(data);
-                                        console.log(data.data.sessionId);
+     .then(data => {
+      console.log('Mensagens: ' + data.data.length);
+
+       let conversationTable = document.querySelector("#conversation");
+       
+        data.data.forEach(msg => {
+  let remoteJid = msg.remoteJid.replace('@s.whatsapp.net', '');
+  let conversation = msg.message.conversation;
+  
+  const newRow = conversationTable.insertRow(0); // insert at the beginning of the table body
+  const newCell = newRow.insertCell(0); // insert a new cell in the row
+
+  let remoteJidSpan = document.createElement('span');
+  remoteJidSpan.textContent = remoteJid;
+  remoteJidSpan.classList.add('contact-number');
+  
+  let msgCard = document.createElement("div");
+  msgCard.classList.add("msgCard");
+  msgCard.appendChild(remoteJidSpan);
+
+  let conversationNode = document.createTextNode(conversation);
+  msgCard.appendChild(conversationNode);
+
+  newCell.appendChild(msgCard);
+  //terminou de colocar as mensagens dentro da tabela
+        })
+
+          
+ 
+
+
+  const rows = Array.from(conversationTable.rows);
+  const sortedRows = rows.reverse(); // reverse the current order of the rows
+  conversationTable.innerHTML = ''; // clear the current contents of the table
+  sortedRows.forEach(row => {
+    conversationTable.appendChild(row); // add the sorted rows back to the table
+  });
+
+
+
+
+})}
+                             
+
+ 
 
 
 
 
 
-
-                                      let conversationTable = document.querySelector("#conversation");
-                                              data.data.forEach(msg => {
-                                                let remoteJid = msg.remoteJid;
-                                                let conversation = msg.message.conversation;
-                                                let msgCard = document.createElement("div");
-                                                msgCard.classList.add("msgCard");
-                                                let remoteJidNode = document.createTextNode(remoteJid);
-                                                let conversationNode = document.createTextNode(conversation);
-                                                msgCard.appendChild(remoteJidNode);
-                                                msgCard.appendChild(document.createElement("br"));
-                                                msgCard.appendChild(conversationNode);
-                                                conversationTable.appendChild(msgCard);
-                                              });});}
-
-
-// Add event listener to the button
+// navigate to chat
 const button = document.getElementById('chat');
 button.addEventListener('click', displayChatData);
 
 
-
-
-
-
-
-
-
-
-
-
-    //LOAD CONVERSATION FROM CONTACT TO CHAT 333 😻
-
-
-    const tableRows = document.querySelectorAll("#contact-list tr");
-      tableRows.forEach(row => {
-      row.addEventListener("click", function() {
-                                  let currentContact = this.querySelector(".contact-card").innerHTML;
-
-                                  console.log('contato: ' + currentContact)
-
-                                
-  });
+const socket = io();
+socket.on('webhook', data => {
+  // Handle the incoming webhook data
+  console.log(data)
 });
 
-let trElements = document.querySelectorAll("#contact-list tr");
-trElements.forEach(tr => {
-  tr.addEventListener("click", function() {
-    let contactCard = this.querySelector(".contact-card");
-    let contactNumber = contactCard.textContent.split("\n")[0];
-    alert(contactNumber);
-  });
-});
+socket.on("connect", () => {
+  console.log(data)
+  console.log(`event: connect | session id: ${socket.id}`)
+      });
 
 
-
-
-
+        // Socket.IO options
 
     </script>
 
 
 </html>
-
-
-
-
-
-
-
-
-
-
 
 
 

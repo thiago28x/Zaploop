@@ -1,15 +1,18 @@
+
+
+
+//original
+
+
+
+
+
 import type { proto } from '@adiwajshing/baileys';
 import { serializePrisma } from '@ookamiiixd/baileys-store';
 import type { RequestHandler } from 'express';
 import { logger, prisma } from '../shared';
 import { delay as delayMs } from '../utils';
 import { getSession, jidExists } from '../wa';
-
-
-
-
-
-
 
 export const list: RequestHandler = async (req, res) => {
   try {

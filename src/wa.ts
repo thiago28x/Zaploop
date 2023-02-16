@@ -12,6 +12,9 @@ import type { Response } from 'express';
 // import { join } from 'path';
 import { toDataURL } from 'qrcode';
 import { logger, prisma } from './shared';
+import { Server } from 'socket.io';
+import { createServer } from 'http';
+
 
 type Session = WASocket & {
   destroy: () => Promise<void>;
@@ -165,6 +168,10 @@ export async function createSession(options: createSessionOptions) {
     res.write(`data: ${JSON.stringify(data)}\n\n`);
   };
 
+
+
+
+
   const handleConnectionUpdate = SSE ? handleSSEConnectionUpdate : handleNormalConnectionUpdate;
   const { state, saveCreds } = await useSession(sessionId);
   const socket = makeWASocket({
@@ -186,6 +193,31 @@ export async function createSession(options: createSessionOptions) {
     },
   });
 
+
+
+
+  //thiago webhook websocket socket.io incoming messages
+
+  //1) create an HTTP server instance and pass it to the socket.io server:
+  const httpServer = createServer();
+  const io = new Server(httpServer);
+  
+
+  //2) function to emit the message via socket.io:
+  function sendViaSocketIO(messages: any) {
+    io.emit('messages.upsert', { messages });
+  }
+
+  
+  // 3) update the existing event listener to call the sendViaSocketIO function:
+  socket.ev.on('messages.upsert', ({ messages }) => {
+    console.log('Mensagem recebida: ', messages);
+    sendViaSocketIO(messages);
+  });
+  
+
+
+
   const store = new Store(sessionId, socket.ev);
   sessions.set(sessionId, { ...socket, destroy, store });
 
@@ -203,10 +235,10 @@ export async function createSession(options: createSessionOptions) {
     handleConnectionUpdate();
   });
 
-
+/* 
   socket.ev.on('messages.upsert', ({ messages }) => {
-    console.log('Mensagem recebida: ', messages)
-})
+    console.log('Mensagem recebida: ', messages) //send via socket.io})
+ */
 
 
 

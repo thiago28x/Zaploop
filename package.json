@@ -22,6 +22,7 @@
     "@hapi/boom": "^10.0.0",
     "@ookamiiixd/baileys-store": "^1.0.0-beta.0",
     "@prisma/client": "^4.7.1",
+    "@types/socket.io": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
@@ -30,7 +31,8 @@
     "pino": "^8.7.0",
     "qrcode": "^1.5.1",
     "qrcode-terminal": "^0.12.0",
-    "sharp": "^0.30.5"
+    "sharp": "^0.30.5",
+    "socket.io": "^4.6.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.13",
