@@ -7,22 +7,13 @@ import makeWASocket, {
 } from '@adiwajshing/baileys';
 import type { Boom } from '@hapi/boom';
 import { initStore, Store, useSession } from '@ookamiiixd/baileys-store';
+import type { Response } from 'express';
 // import { writeFile } from 'fs/promises';
 // import { join } from 'path';
 import { toDataURL } from 'qrcode';
+import type { WebSocket } from 'ws';
 import { logger, prisma } from './shared';
-import { app } from './index'; // or wherever app is defined
-import { Request, Response } from 'express';     //novo
-import { Socket } from 'socket.io';    //novo
-import { io } from './index';
-
-
-
-
-
-
-
-
+import { delay } from './utils';
 
 type Session = WASocket & {
   destroy: () => Promise<void>;
@@ -38,8 +29,6 @@ const MAX_RECONNECT_RETRIES = Number(process.env.MAX_RECONNECT_RETRIES || 5);
 const SSE_MAX_QR_GENERATION = Number(process.env.SSE_MAX_QR_GENERATION || 5);
 const SESSION_CONFIG_ID = 'session-config';
 
-
-//     loading and initializing any existing sessions from the database and making them ready for use.
 export async function init() {
   initStore({ prisma, logger });
   const sessions = await prisma.session.findMany({
@@ -48,7 +37,8 @@ export async function init() {
   });
 
   for (const { sessionId, data } of sessions) {
-    createSession({ sessionId, socketConfig: JSON.parse(data) });
+    const { readIncomingMessages, ...socketConfig } = JSON.parse(data);
+    createSession({ sessionId, readIncomingMessages, socketConfig });
   }
 }
 
@@ -67,54 +57,31 @@ type createSessionOptions = {
   sessionId: string;
   res?: Response;
   SSE?: boolean;
+  readIncomingMessages?: boolean;
   socketConfig?: SocketConfig;
 };
 
-// declare a function that returns a promise which creates a new session
 export async function createSession(options: createSessionOptions) {
-
-  // destructure the options object and assign default values
-  const { sessionId, res, SSE = false, socketConfig } = options;
-
-  // create a string identifier for this session
+  const { sessionId, res, SSE = false, readIncomingMessages = false, socketConfig } = options;
   const configID = `${SESSION_CONFIG_ID}-${sessionId}`;
-
-  // initialize the connection state for this session as closed
   let connectionState: Partial<ConnectionState> = { connection: 'close' };
 
-  // define a destroy function that takes an optional logout parameter and returns a promise
   const destroy = async (logout = true) => {
-
-    // use try-catch to handle errors when deleting data from the database
     try {
       await Promise.all([
-        // use the socket object to log out if logout is truthy (i.e., not null, undefined, 0, false, or "")
         logout && socket.logout(),
-
-        // delete all chats for this session from the database
         prisma.chat.deleteMany({ where: { sessionId } }),
-
-        // delete all contacts for this session from the database
         prisma.contact.deleteMany({ where: { sessionId } }),
-
-        // delete all messages for this session from the database
         prisma.message.deleteMany({ where: { sessionId } }),
-
-        // delete all group metadata for this session from the database
         prisma.groupMetadata.deleteMany({ where: { sessionId } }),
-
-        // delete the session itself from the database
         prisma.session.deleteMany({ where: { sessionId } }),
       ]);
     } catch (e) {
-      // log any errors that occur during destruction
       logger.error(e, 'An error occured during session destroy');
     } finally {
-      // remove this session from the set of active sessions
       sessions.delete(sessionId);
     }
   };
-
 
   const handleConnectionClose = () => {
     const code = (connectionState.lastDisconnect?.error as Boom)?.output?.statusCode;
@@ -124,8 +91,6 @@ export async function createSession(options: createSessionOptions) {
     if (code === DisconnectReason.loggedOut || doNotReconnect) {
       if (res) {
         !SSE && !res.headersSent && res.status(500).json({ error: 'Unable to create session' });
-        console.log('Unable to create session');
-        console.trace();
         res.end();
       }
       destroy(doNotReconnect);
@@ -176,10 +141,6 @@ export async function createSession(options: createSessionOptions) {
     res.write(`data: ${JSON.stringify(data)}\n\n`);
   };
 
-
-
-
-
   const handleConnectionUpdate = SSE ? handleSSEConnectionUpdate : handleNormalConnectionUpdate;
   const { state, saveCreds } = await useSession(sessionId);
   const socket = makeWASocket({
@@ -201,29 +162,11 @@ export async function createSession(options: createSessionOptions) {
     },
   });
 
-
-
-
-//webhook
-socket.ev.on('messages.upsert', ({ messages }) => {
-  console.log('Mensagem recebida: ', messages)
-  let msgContent = messages
-    .map(message => `pushName: ${message.pushName}, remoteJid: ${message.key.remoteJid}, conversation: ${message.message?.conversation}`)
-    .join('; ');
-  io.emit('msg', msgContent); 
-});
-
-
-  
-
-
-
   const store = new Store(sessionId, socket.ev);
   sessions.set(sessionId, { ...socket, destroy, store });
 
   socket.ev.on('creds.update', saveCreds);
   socket.ev.on('connection.update', (update) => {
-    console.log('Zaploop - connection update: \n', update);
     connectionState = update;
     const { connection } = update;
 
@@ -235,12 +178,15 @@ socket.ev.on('messages.upsert', ({ messages }) => {
     handleConnectionUpdate();
   });
 
-/* 
-  socket.ev.on('messages.upsert', ({ messages }) => {
-    console.log('Mensagem recebida: ', messages) //send via socket.io})
- */
+  if (readIncomingMessages) {
+    socket.ev.on('messages.upsert', async (m) => {
+      const message = m.messages[0];
+      if (message.key.fromMe || m.type !== 'notify') return;
 
-
+      await delay(1000);
+      await socket.readMessages([message.key]);
+    });
+  }
 
   // Debug events
   // socket.ev.on('messaging-history.set', (data) => dump('messaging-history.set', data));
@@ -249,10 +195,28 @@ socket.ev.on('messages.upsert', ({ messages }) => {
   // socket.ev.on('groups.upsert', (data) => dump('groups.upsert', data));
 
   await prisma.session.upsert({
-    create: { id: configID, sessionId, data: JSON.stringify(socketConfig || {}) },
+    create: {
+      id: configID,
+      sessionId,
+      data: JSON.stringify({ readIncomingMessages, ...socketConfig }),
+    },
     update: {},
     where: { sessionId_id: { id: configID, sessionId } },
   });
+}
+
+export function getSessionStatus(session: Session) {
+  const state = ['CONNECTING', 'CONNECTED', 'DISCONNECTING', 'DISCONNECTED'];
+  let status = state[(session.ws as WebSocket).readyState];
+  status = session.user ? 'AUTHENTICATED' : status;
+  return status;
+}
+
+export function listSessions() {
+  return Array.from(sessions.entries()).map(([id, session]) => ({
+    id,
+    status: getSessionStatus(session),
+  }));
 }
 
 export function getSession(sessionId: string) {
@@ -285,17 +249,8 @@ export async function jidExists(
   }
 }
 
-
-/* const clients: Socket[] = [];
-
-
-app.get('/msg', (req: Request, res: Response) => {
-  
-  const msg = req.query.msg || '';
-  for(const client of clients) {
-    client.emit('msg', msg)
-  }
-  res.json({
-    ok:true
-  })
-}) */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// export async function dump(fileName: string, data: any) {
+//   const path = join(__dirname, '..', 'debug', `${fileName}.json`);
+//   await writeFile(path, JSON.stringify(data, null, 2));
+// }

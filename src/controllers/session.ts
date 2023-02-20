@@ -1,12 +1,21 @@
 import type { RequestHandler } from 'express';
-import type { WebSocket } from 'ws';
-import { createSession, deleteSession, getSession, sessionExists } from '../wa';
+import {
+  createSession,
+  deleteSession,
+  getSession,
+  getSessionStatus,
+  listSessions,
+  sessionExists,
+} from '../wa';
+
+export const list: RequestHandler = (req, res) => {
+  res.status(200).json(listSessions());
+};
 
 export const find: RequestHandler = (req, res) =>
   res.status(200).json({ message: 'Session found' });
 
 export const status: RequestHandler = (req, res) => {
-  const state = ['CONNECTING', 'CONNECTED', 'DISCONNECTING', 'DISCONNECTED'];
   const session = getSession(req.params.sessionId)!;
 
   let status = state[(session.ws as WebSocket).readyState];
@@ -18,10 +27,11 @@ export const status: RequestHandler = (req, res) => {
 };
 
 export const add: RequestHandler = async (req, res) => {
-  const { sessionId, ...options } = req.body;
+  const { sessionId, readIncomingMessages, ...socketConfig } = req.body;
 
-  if (sessionExists(sessionId)) return res.status(400).json({ error: `Session already exists, \n User: ${sessionId}` });
-  createSession({ sessionId, res, socketConfig: options });
+
+  if (sessionExists(sessionId)) return res.status(400).json({ error: 'Session already exists, \n User: ${sessionId}' });
+  createSession({ sessionId, res, readIncomingMessages, socketConfig });
 };
 
 export const addSSE: RequestHandler = async (req, res) => {
