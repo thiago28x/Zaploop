@@ -7,13 +7,21 @@ import makeWASocket, {
 } from '@adiwajshing/baileys';
 import type { Boom } from '@hapi/boom';
 import { initStore, Store, useSession } from '@ookamiiixd/baileys-store';
-import type { Response } from 'express';
 // import { writeFile } from 'fs/promises';
 // import { join } from 'path';
 import { toDataURL } from 'qrcode';
 import { logger, prisma } from './shared';
-import { Server } from 'socket.io';
-import { createServer } from 'http';
+import { app } from './index'; // or wherever app is defined
+import { Request, Response } from 'express';     //novo
+import { Socket } from 'socket.io';    //novo
+import { io } from './index';
+
+
+
+
+
+
+
 
 
 type Session = WASocket & {
@@ -196,24 +204,16 @@ export async function createSession(options: createSessionOptions) {
 
 
 
-  //thiago webhook websocket socket.io incoming messages
+//webhook
+socket.ev.on('messages.upsert', ({ messages }) => {
+  console.log('Mensagem recebida: ', messages)
+  let msgContent = messages
+    .map(message => `pushName: ${message.pushName}, remoteJid: ${message.key.remoteJid}, conversation: ${message.message?.conversation}`)
+    .join('; ');
+  io.emit('msg', msgContent); 
+});
 
-  //1) create an HTTP server instance and pass it to the socket.io server:
-  const httpServer = createServer();
-  const io = new Server(httpServer);
-  
 
-  //2) function to emit the message via socket.io:
-  function sendViaSocketIO(messages: any) {
-    io.emit('messages.upsert', { messages });
-  }
-
-  
-  // 3) update the existing event listener to call the sendViaSocketIO function:
-  socket.ev.on('messages.upsert', ({ messages }) => {
-    console.log('Mensagem recebida: ', messages);
-    sendViaSocketIO(messages);
-  });
   
 
 
@@ -285,8 +285,17 @@ export async function jidExists(
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-// export async function dump(fileName: string, data: any) {
-//   const path = join(__dirname, '..', 'debug', `${fileName}.json`);
-//   await writeFile(path, JSON.stringify(data, null, 2));
-// }
+
+/* const clients: Socket[] = [];
+
+
+app.get('/msg', (req: Request, res: Response) => {
+  
+  const msg = req.query.msg || '';
+  for(const client of clients) {
+    client.emit('msg', msg)
+  }
+  res.json({
+    ok:true
+  })
+}) */

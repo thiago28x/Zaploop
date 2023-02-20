@@ -11,6 +11,7 @@ import { getSession, jidExists } from '../wa';
 
 
 
+
 export const list: RequestHandler = async (req, res) => {
   try {
     const { sessionId } = req.params;
