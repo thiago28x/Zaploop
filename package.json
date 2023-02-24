@@ -1,21 +1,19 @@
 {
   "name": "baileys-api",
-  "description": "Simple RESTful WhatsApp API",
-  "version": "1.0.0-beta.0",
+  "description": "Full WhatsApp API + Websockets + Bulk Message sender + Chatbot",
+  "version": "2",
   "private": true,
   "main": "dist/index.js",
   "repository": "github:ookamiiixd/baileys-api",
-  "author": "Royhan (https://github.com/ookamiiixd)",
-  "bugs": {
-    "url": "https://github.com/ookamiiixd/baileys-api/issues"
-  },
-  "homepage": "https://github.com/ookamiiixd/baileys-api#readme",
+  "author": "Thiago Woroszczuk",
+  "homepage": "www.zaploop.xyz",
   "license": "MIT",
   "scripts": {
     "start": "node zaploop",
     "build": "tsc",
     "lint": "eslint .",
-    "format": "prettier . --write"
+    "format": "prettier . --write",
+    "dev": "ts-node-dev --transpile-only --dir src src/index.ts"
   },
   "dependencies": {
     "@adiwajshing/baileys": "^5.0.0",
