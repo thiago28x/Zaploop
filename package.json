@@ -53,6 +53,7 @@
   },
   "files": [
     "dist/",
+    "views/",
     "prisma/schema.prisma",
     ".env.example"
   ]
