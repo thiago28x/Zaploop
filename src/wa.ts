@@ -14,6 +14,8 @@ import { toDataURL } from 'qrcode';
 import type { WebSocket } from 'ws';
 import { logger, prisma } from './shared';
 import { delay } from './utils';
+import { io } from './index';
+
 
 type Session = WASocket & {
   destroy: () => Promise<void>;
@@ -177,16 +179,48 @@ export async function createSession(options: createSessionOptions) {
     if (connection === 'close') handleConnectionClose();
     handleConnectionUpdate();
   });
+///webhook2
+if (readIncomingMessages) {
+  socket.ev.on('messages.upsert', async (m) => {
 
-  if (readIncomingMessages) {
-    socket.ev.on('messages.upsert', async (m) => {
-      const message = m.messages[0];
-      if (message.key.fromMe || m.type !== 'notify') return;
+    const message = m.messages[0];
 
-      await delay(1000);
-      await socket.readMessages([message.key]);
-    });
-  }
+
+    console.log('Mensagem recebida: ', message)
+message
+
+    io.emit('msg', JSON.stringify('nova msg'));
+
+    if (message.key.fromMe || m.type !== 'notify') return;
+
+    const messageData = {
+      pushName: message.pushName,
+      remoteJid: message.key.remoteJid,
+      conversation: message.message?.conversation
+    };
+
+    await delay(1000);
+    await socket.readMessages([message.key]);
+
+    
+    io.emit('msg', JSON.stringify(messageData));
+  });
+}
+
+
+/* // function 2
+function handleMessages(messages) {
+  console.log('Mensagem recebida: ', messages)
+  const messageData = messages.map(message => {
+    return {
+      pushName: message.pushName,
+      remoteJid: message.key.remoteJid,
+      conversation: message.message?.conversation
+    };
+  });
+  io.emit('msg', JSON.stringify(messageData));
+}
+ */
 
   // Debug events
   // socket.ev.on('messaging-history.set', (data) => dump('messaging-history.set', data));

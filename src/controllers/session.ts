@@ -17,20 +17,13 @@ export const find: RequestHandler = (req, res) =>
 
 export const status: RequestHandler = (req, res) => {
   const session = getSession(req.params.sessionId)!;
-
-  let status = state[(session.ws as WebSocket).readyState];
-  status = session.user ? 'AUTHENTICATED' : status;
-  
-  console.trace(`Session ID: ${req.params.sessionId} \n, WebSocket state: \n ${(session.ws as WebSocket).readyState}`);
-  console.log(`User: ${session.user}, \nStatus: ${status}`);
-  res.status(200).json({ status });
+  res.status(200).json({ status: getSessionStatus(session) });
 };
 
 export const add: RequestHandler = async (req, res) => {
   const { sessionId, readIncomingMessages, ...socketConfig } = req.body;
 
-
-  if (sessionExists(sessionId)) return res.status(400).json({ error: 'Session already exists, \n User: ${sessionId}' });
+  if (sessionExists(sessionId)) return res.status(400).json({ error: 'Session already exists' });
   createSession({ sessionId, res, readIncomingMessages, socketConfig });
 };
 

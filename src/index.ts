@@ -4,35 +4,52 @@ import express from 'express';
 import routes from './routes';
 import { init } from './wa';
 import loggerMiddleware from './middlewares/logger';
+import { createServer } from 'https';
+import  readFileSync  from 'fs';
+import fs from 'fs';
 import { Socket } from 'socket.io';
+import { Server } from 'socket.io';
 
-export const app = express();
 
-app.use(cors());
+
+const app = express();
+
+app.use(cors({ origin: '*' }));
 app.use(express.json());
 app.use('/', routes);
 app.use(loggerMiddleware);
 
+const options = {
+  key: fs.readFileSync('/etc/letsencrypt/live/api2.zaploop.xyz/privkey.pem'),
+  cert: fs.readFileSync('/etc/letsencrypt/live/api2.zaploop.xyz/fullchain.pem')
+};
+
+/*     TO-DO change path to .env
+const options = {
+  key: readFileSync(process.env.SSL_KEY_PATH),
+  cert: readFileSync(process.env.SSL_CERT_PATH),
+}; */
+
+const server = createServer(options, app);
+
+const io = new Server(server);
 
 
-
-const http = require('http');
-const httpServer = require("http").createServer(app);
-const options = { /* ... */ };
-//const io = require("socket.io")(httpServer, options);
-import { Server } from "socket.io";
-const io = new Server<
-  ClientToServerEvents,
-  ServerToClientEvents,
-  InterServerEvents,
-  SocketData
->(httpServer, options);
-
+init();
 
 
 const host = process.env.HOST || '0.0.0.0';
 const port = Number(process.env.PORT || 3000);
-const listener = () => console.log(`\n \n Server ready 🤩 \n \n http://${host}:${port} \n `);
+
+server.listen(port, host, () => {
+  console.log(`\n \n Server ready 🤩 \n \n https://${host}:${port}/pages/start \n `);
+});
+
+
+
+
+
+
 
 
 //typescript defining types for socket.io
@@ -62,18 +79,15 @@ app.get('/', (req, res) => {
 });
 
 
-(async () => {
-  await init();
-  httpServer.listen(port, host, listener);
-})();
 
 
 io.on('connection', (client: Socket) => {
   clients.push(client);
-  console.log('a user connected 😍 \n');
+  console.log('a user connected 😍 \n' + client.id);
   client.on('disconnect', () => {
+    console.log('user disconnected 😪 \n' + client.id);
     clients.splice(clients.indexOf(client), 1)
-    console.log('user disconnected 😪 \n');
+
   });
 });
 
@@ -87,7 +101,6 @@ io.on('connection', (client: Socket) => {
   })
 })
 
-//const clients : Array<any>= [];
 
 const clients: Socket[] = [];
 
@@ -106,9 +119,11 @@ io.on("connection", (socket) => {
   // works when broadcast to all
   io.emit("noArg");
 
-});
+}); 
 
-//export { emitMessage };
+
+
+
 export { io };
 
 
